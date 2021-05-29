@@ -65,8 +65,8 @@ class UpbitTradeAPI(UpbitAPI, TradeAPIInterface):
         return {
             "market": market,
             "side": side,
-            "volume": units,
-            "price": price,
+            "volume": str(units),
+            "price": str(price),
             "ord_type": self.OrderType.LIMIT,
         }
 
@@ -78,7 +78,7 @@ class UpbitTradeAPI(UpbitAPI, TradeAPIInterface):
         query = {
             "market": f"{order_currency}-{pay_currency}",
             "side": self.Side.ASK,
-            "volume": units,
+            "volume": str(units),
             "ord_type": self.OrderType.MARKET,
         }
         return self._order(query)
