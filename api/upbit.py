@@ -17,7 +17,7 @@ class UpbitAPI:
         self.access_key = os.environ["UPBIT_OPEN_API_ACCESS_KEY"]
         self.secret_key = os.environ["UPBIT_OPEN_API_SECRET_KEY"]
 
-    def get_payload(self, query=None):
+    def _get_payload(self, query):
         payload = {
             "access_key": self.access_key,
             "nonce": str(uuid.uuid4()),
@@ -33,7 +33,8 @@ class UpbitAPI:
 
         return payload
 
-    def get_headers(self, payload):
+    def get_headers(self, query=None):
+        payload = self._get_payload(query)
         jwt_token = jwt.encode(payload, self.secret_key)
         authorize_token = 'Bearer {}'.format(jwt_token)
         return {"Authorization": authorize_token}
