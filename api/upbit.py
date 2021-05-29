@@ -61,6 +61,15 @@ class UpbitTradeAPI(UpbitAPI, TradeAPIInterface):
             "cancel_order": f"{self.BASE_URL}/v1/order",
         }
 
+    def _get_limit_order_query(self, market, side, units, price):
+        return {
+            "market": market,
+            "side": side,
+            "volume": units,
+            "price": price,
+            "ord_type": self.OrderType.LIMIT,
+        }
+
     def _order(self, query):
         headers = self.get_headers(query)
         return self.session.post(self.urls["order"], params=query, headers=headers, timeout=3)
@@ -85,21 +94,9 @@ class UpbitTradeAPI(UpbitAPI, TradeAPIInterface):
         return self._order(query)
 
     def limit_sell(self, order_currency, pay_currency, units, price):
-        query = {
-            "market": f"{order_currency}-{pay_currency}",
-            "side": self.Side.ASK,
-            "volume": units,
-            "price": price,
-            "ord_type": self.OrderType.MARKET,
-        }
+        query = self._get_limit_order_query(f"{order_currency}-{pay_currency}", self.Side.ASK, units, price)
         return self._order(query)
 
     def limit_buy(self, order_currency, pay_currency, units, price):
-        query = {
-            "market": f"{order_currency}-{pay_currency}",
-            "side": self.Side.BID,
-            "volume": units,
-            "price": price,
-            "ord_type": self.OrderType.MARKET,
-        }
+        query = self._get_limit_order_query(f"{pay_currency}-{order_currency}", self.Side.BID, units, price)
         return self._order(query)
